@@ -44,7 +44,6 @@ class BugHutner(tk.Tk):
         frame = self.frames[window_name]
         frame.tkraise()
 
-
 class LoginWindow(tk.Frame):
 
     def __init__(self, master, controller):
@@ -56,7 +55,7 @@ class LoginWindow(tk.Frame):
 
         #Titulo da página
         login_label = tk.Label(self, text = "Login", font = ("Montserrat", 44), bg = teal_Green)
-        login_label.grid(row = 0,  column = 0, columnspan = 3, sticky = 'n'+'w'+'e'+'s', padx = 10, pady = 10)
+        login_label.grid(row = 0,  column = 0, columnspan = 3, sticky = 'w', padx = 85, pady = 10)
 
         #Criando a entrada para o Username
         def holder_UText(event):
@@ -68,11 +67,15 @@ class LoginWindow(tk.Frame):
                 username_in.insert(0, "Usuário")
                 username_in.config(fg = "#c2c2c2")
 
-        username_in = tk.Entry(self, font = ("Montserrat"), fg = "#c2c2c2")
+        username_in = tk.Entry(self, font = ("Montserrat"), fg = "#c2c2c2", width = 28)
         username_in.insert(0, "Usuário")
         username_in.bind("<FocusIn>", holder_UText)
         username_in.bind("<FocusOut>", holder_UText)
-        username_in.grid(row = 1, column = 0, columnspan = 3, sticky = 'n'+'w'+'e'+'s', padx = 12, pady = 10)
+        username_in.grid(row = 1, column = 0, columnspan = 2, sticky = 'w', padx = 32, pady = 10)
+
+        self.user_Image = tk.PhotoImage(file = "Images/user.png")
+        user_icon = tk.Label(self, image = self.user_Image, bd = 0, padx = 100, background = teal_Green, activebackground  = teal_Green)
+        user_icon.grid(row = 1, column = 0, sticky = 'w')
 
         #Criando a entrada para a senha
         def holder_PText(event):
@@ -90,33 +93,37 @@ class LoginWindow(tk.Frame):
         password_in.insert(0, "Senha")
         password_in.bind("<FocusIn>", holder_PText)
         password_in.bind("<FocusOut>", holder_PText)
-        password_in.grid(row = 2, column = 0, columnspan = 3, sticky = 'n'+'w'+'e'+'s', padx = 12, pady = 10)
+        password_in.grid(row = 2, column = 0, columnspan = 2, sticky = 'n'+'w'+'e'+'s', padx = 32, pady = 12)
+
+        self.password_Image = tk.PhotoImage(file = "Images/password.png")
+        password_icon = tk.Label(self, image = self.password_Image, bd = 0, padx = 100, background = teal_Green, activebackground  = teal_Green)
+        password_icon.grid(row = 2, column = 0, sticky = 'w')
 
         #Botão que redireciona para se registrar
         forgotP_btn = tk.Button(self, text = "Esqueci a senha", command = lambda: controller.show_frame("ForgotPWindow"),
                                 font = ("Montserrat",10), bg = teal_Green, fg = "#002e29", activebackground =  "#01695d",  borderwidth = 0)
-        forgotP_btn.grid(row = 3, column = 1, padx = 15)
+        forgotP_btn.grid(row = 3, column = 1, padx = 15, sticky = 'w')
 
         #Botão de lembrar desse usuário
         def remember_user():
             return
 
-        remember_box = tk.Checkbutton(self, text = "Lembrar deste usuário", font = ("Montserrat",10), bg = teal_Green, fg = "#002e29")
+        remember_box = tk.Checkbutton(self, text = "Lembrar deste usuário", font = ("Montserrat",10), bg = teal_Green, fg = "#002e29", activebackground = teal_Green)
         remember_box.deselect()
-        remember_box.grid(row = 3, column = 0, sticky = 'w'+'e'+'n'+'s', padx = 7)
+        remember_box.grid(row = 3, column = 0, sticky = 'w', padx = 4)
 
         #Botão de login
         def login():
             return
 
         login_btn = tk.Button(self, text = "Login", command = login, font = ("Montserrat"), bg = forest_Green, activebackground =  "#01695d")
-        login_btn.grid(row = 4, column = 0, columnspan = 2, sticky = 'n'+'w'+'e'+'s', padx = 12, pady = 10)
-        login_btn.configure(height = 1, width = 1)
+        login_btn.grid(row = 4, column = 0, columnspan = 2, sticky = 'w', padx = 2, pady = 10)
+        login_btn.configure(height = 1, width = 33)
 
         #Botão de Registrar-se
         register_btn = tk.Button(self, text = "Criar uma conta", command = lambda: controller.show_frame("RegisterWindow"),
-                                font = ("Montserrat"), bg = teal_Green, fg = "#002e29", activebackground =  "#01695d",  borderwidth = 0)
-        register_btn.grid(row = 5, column = 0, columnspan = 2, sticky = 'n'+'w'+'e'+'s', padx = 12, pady = 10)
+                                font = ("Montserrat"), bg = teal_Green, fg = "#002e29", activebackground =  teal_Green, activeforeground = black, borderwidth = 0)
+        register_btn.grid(row = 5, column = 0, columnspan = 2, sticky = 'w' + 'n', padx = 105, pady = 10)
 
 class RegisterWindow(tk.Frame):
     def __init__(self, master, controller):
@@ -128,11 +135,11 @@ class RegisterWindow(tk.Frame):
         self.back_btnImage = tk.PhotoImage(file = "Images/back_arrow.png") #precisa ser self se não o garbage colector pega
         back_btn = tk.Button(self, image = self.back_btnImage, command = lambda: controller.show_frame("LoginWindow"),
                             borderwidth = 0, background = teal_Green, activebackground  = teal_Green)
-        back_btn.grid(row = 0, column = 0, padx = 2, pady = (10,0), sticky = "w")
+        back_btn.grid(row = 0, column = 0, padx = 2, pady = (10,0), sticky = "w" + 'n')
 
         #Titulo da página
         register_label = tk.Label(self, text = "Criar conta", font = ("Montserrat", 44), bg = teal_Green)
-        register_label.grid(row = 1,  column = 0, padx = 30, sticky = 'n'+'w'+'e'+'s')
+        register_label.grid(row = 0,  column = 0, padx = 45, pady = (20,0), sticky = 'n'+'w')
 
         #Criando a entrada para o E-mail
         def holder_UText(event):
@@ -164,7 +171,7 @@ class RegisterWindow(tk.Frame):
         new_username.insert(0, "Usuário")
         new_username.bind("<FocusIn>", holder_UText)
         new_username.bind("<FocusOut>", holder_UText)
-        new_username.grid(row = 3, column = 0, sticky = "w", padx = 70, pady = 10)
+        new_username.grid(row = 3, column = 0, columnspan = 2, sticky = 'w', padx = 70, pady = 10)
 
         #Criando a entrada para a senha
         def holder_PText(event):
@@ -198,15 +205,13 @@ class RegisterWindow(tk.Frame):
         new_passwordC.insert(0, "Confirmar senha")
         new_passwordC.bind("<FocusIn>", holder_PCText)
         new_passwordC.bind("<FocusOut>", holder_PCText)
-        new_passwordC.grid(row = 5, column = 0, sticky = "w", padx = 70, pady = (10,15))
+        new_passwordC.grid(row = 5, column = 0, sticky = "w", padx = 70, pady = (10,26))
 
         #Botão para criar a conta
         def criar_Conta():
             return
         register_btn = tk.Button(self, text = "Criar", command = criar_Conta, font = ("Montserrat"), bg = forest_Green, activebackground =  "#01695d", width = 27)
-        register_btn.grid(row = 6, column = 0, columnspan = 2)
-
-
+        register_btn.grid(row = 6, column = 0, columnspan = 2, sticky = 'w', padx = 69)
 
 class ForgotPWindow(tk.Frame):
     def __init__(self, master, controller):
@@ -218,11 +223,11 @@ class ForgotPWindow(tk.Frame):
         self.back_btnImage = tk.PhotoImage(file = "Images/back_arrow.png") #precisa ser self se não o garbage colector pega
         back_btn = tk.Button(self, image = self.back_btnImage, command = lambda: controller.show_frame("LoginWindow"),
                             borderwidth = 0, background = teal_Green, activebackground  = teal_Green)
-        back_btn.grid(row = 0, column = 0, padx = 2, pady = (10,0), sticky = "w")
+        back_btn.grid(row = 0, column = 0, padx = 2, pady = (10,0), sticky = "w" + "n")
 
         #Titulo da página
         register_label = tk.Label(self, text = "Recuperar Senha", font = ("Montserrat", 30), bg = teal_Green)
-        register_label.grid(row = 1,  column = 0, padx = 30, pady = (40,10), sticky = 'n'+'w'+'e'+'s')
+        register_label.grid(row = 0,  column = 0, padx = 30, pady = (45,10), sticky = 'n'+'w'+'e'+'s')
 
         #Criando a entrada para o E-mail
         def holder_UText(event):
