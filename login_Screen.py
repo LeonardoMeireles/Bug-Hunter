@@ -1,6 +1,7 @@
 import tkinter as tk
 from PIL import ImageTk, Image
 
+import re
 import sqlite3
 
 connection = sqlite3.connect("users.db")
@@ -210,8 +211,62 @@ class RegisterWindow(tk.Frame):
         new_passwordC.bind("<FocusOut>", holder_PCText)
         new_passwordC.grid(row = 5, column = 0, sticky = "w", padx = 70, pady = (10,26))
 
+        # Valida os campos de input
+        def validar_input():
+            if new_email.get() == "E-mail" :
+                return {
+                    "success": False,
+                    "error": "Este campo é obrigatório"
+                }
+
+            if not re.search("^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w+$", new_email.get()) :
+                return {
+                    "success": False,
+                    "error": "Insira um e-mail válido"
+                }
+            
+            if new_username.get() == "Usuário" :
+                return {
+                    "success": False,
+                    "error": "Este campo é obrigatório"
+                }
+
+            if new_password.get() == "Senha" :
+                return {
+                    "success": False,
+                    "error": "Este campo é obrigatório"
+                }
+        
+            if new_passwordC.get() == "Confirmar senha" :
+                return {
+                    "success": False,
+                    "error": "Este campo é obrigatório"
+                }
+
+            if new_passwordC.get() != new_password.get() :
+                return {
+                    "success": False,
+                    "error": "As senhas não batem"
+                }
+
+            return {
+                    "success": True,
+                    "error": False
+            }
+
         #Botão para criar a conta
         def criar_Conta():
+            if validar_input()["success"] == True :
+                query = "INSERT INTO users (username, email, hash) VALUES ('{}', '{}', '{}')".format(new_username.get(), new_email.get(), new_passwordC.get())
+                
+                try:
+                    cursor.execute(query)
+                except NameError:
+                    print(NameError)
+            
+            else:
+                pass
+
             return
         register_btn = tk.Button(self, text = "Criar", command = criar_Conta, font = ("Montserrat"), bg = forest_Green, activebackground =  "#01695d", width = 27)
         register_btn.grid(row = 6, column = 0, columnspan = 2, sticky = 'w', padx = 69)
