@@ -3,6 +3,9 @@ from PIL import ImageTk, Image
 
 import sqlite3
 
+connection = sqlite3.connect("users.db")
+cursor = connection.cursor()
+
 #Color Palette: 
 teal_Green = "#028476"
 forest_Green = "#015D53"
