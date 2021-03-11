@@ -14,7 +14,7 @@ class BugHutner(tk.Tk):
         tk.Tk.__init__(self, *args, **kwargs)
         
         self.title("Bug Hunter")
-        self.iconbitmap("References/Icones/FeelsGoodMan.ico")
+        self.iconbitmap("Assets/bh_Icon.ico")
         self.geometry("800x800")
         self.resizable(width = 0, height = 0)
 
@@ -73,7 +73,7 @@ class LoginWindow(tk.Frame):
         username_in.bind("<FocusOut>", holder_UText)
         username_in.grid(row = 1, column = 0, columnspan = 2, sticky = 'w', padx = 32, pady = 10)
 
-        self.user_Image = tk.PhotoImage(file = "Images/user.png")
+        self.user_Image = tk.PhotoImage(file = "Assets/user.png")
         user_icon = tk.Label(self, image = self.user_Image, bd = 0, padx = 100, background = teal_Green, activebackground  = teal_Green)
         user_icon.grid(row = 1, column = 0, sticky = 'w')
 
@@ -95,7 +95,7 @@ class LoginWindow(tk.Frame):
         password_in.bind("<FocusOut>", holder_PText)
         password_in.grid(row = 2, column = 0, columnspan = 2, sticky = 'n'+'w'+'e'+'s', padx = 32, pady = 12)
 
-        self.password_Image = tk.PhotoImage(file = "Images/password.png")
+        self.password_Image = tk.PhotoImage(file = "Assets/password.png")
         password_icon = tk.Label(self, image = self.password_Image, bd = 0, padx = 100, background = teal_Green, activebackground  = teal_Green)
         password_icon.grid(row = 2, column = 0, sticky = 'w')
 
@@ -132,7 +132,7 @@ class RegisterWindow(tk.Frame):
         self.controller = controller
         self.config(highlightbackground = forest_Green, width = 400, height = 400, padx = 5, pady = 2, bg = teal_Green) #Dentro do Frame
 
-        self.back_btnImage = tk.PhotoImage(file = "Images/back_arrow.png") #precisa ser self se não o garbage colector pega
+        self.back_btnImage = tk.PhotoImage(file = "Assets/back_arrow.png") #precisa ser self se não o garbage colector pega
         back_btn = tk.Button(self, image = self.back_btnImage, command = lambda: controller.show_frame("LoginWindow"),
                             borderwidth = 0, background = teal_Green, activebackground  = teal_Green)
         back_btn.grid(row = 0, column = 0, padx = 2, pady = (10,0), sticky = "w" + 'n')
@@ -220,7 +220,7 @@ class ForgotPWindow(tk.Frame):
         self.controller = controller
         self.config(highlightbackground = forest_Green, width = 400, height = 400, padx = 5, pady = 2, bg = teal_Green) #Dentro do Frame
 
-        self.back_btnImage = tk.PhotoImage(file = "Images/back_arrow.png") #precisa ser self se não o garbage colector pega
+        self.back_btnImage = tk.PhotoImage(file = "Assets/back_arrow.png") #precisa ser self se não o garbage colector pega
         back_btn = tk.Button(self, image = self.back_btnImage, command = lambda: controller.show_frame("LoginWindow"),
                             borderwidth = 0, background = teal_Green, activebackground  = teal_Green)
         back_btn.grid(row = 0, column = 0, padx = 2, pady = (10,0), sticky = "w" + "n")
