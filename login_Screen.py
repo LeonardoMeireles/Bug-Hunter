@@ -230,7 +230,7 @@ class RegisterWindow(tk.Frame):
                 new_password.config(show = "*")
             elif current == "":
                 new_password.insert(0, "Senha")
-                new_password.config(fg = "#c2c2c2")
+                new_password.config(fg = "#c2c2c2", show = "")
 
         new_password = tk.Entry(self, font = ("Montserrat"), fg = "#c2c2c2", width = 25)
         new_password.insert(0, "Senha")
@@ -247,7 +247,7 @@ class RegisterWindow(tk.Frame):
                 new_passwordC.config(show = "*")
             elif current == "":
                 new_passwordC.insert(0, "Confirmar senha")
-                new_passwordC.config(fg = "#c2c2c2")
+                new_passwordC.config(fg = "#c2c2c2", show = "")
 
 
         new_passwordC = tk.Entry(self, font = ("Montserrat"), fg = "#c2c2c2", width = 25)
@@ -266,47 +266,60 @@ class RegisterWindow(tk.Frame):
             error_msg.config(text = "")
             if ( new_email.get() == "E-mail" ) or (new_email.get() == ""):
                 new_passwordC.grid(row = 6, column = 0, sticky = "w", padx = 70, pady = (5,2))
+                register_btn.grid(row = 8, column = 0, columnspan = 2, sticky = 'w' + 'n', padx = 69)
                 error_msg.config(text = "* Inserir e-mail")
                 return
             elif ( new_name.get() == "Nome") or (new_name.get() == ""):
                 new_passwordC.grid(row = 6, column = 0, sticky = "w", padx = 70, pady = (5,2))
+                register_btn.grid(row = 8, column = 0, columnspan = 2, sticky = 'w' + 'n', padx = 69)
                 error_msg.config(text = "* Inserir nome")
                 return
             elif ( new_username.get() == "Usuário" ) or (new_username.get() == ""):
                 new_passwordC.grid(row = 6, column = 0, sticky = "w", padx = 70, pady = (5,2))
+                register_btn.grid(row = 8, column = 0, columnspan = 2, sticky = 'w' + 'n', padx = 69)
                 error_msg.config(text = "* Inserir usuário")
                 return
             elif ( new_password.get() == "Senha" ) or (new_password.get() == ""):
                 new_passwordC.grid(row = 6, column = 0, sticky = "w", padx = 70, pady = (5,2))
+                register_btn.grid(row = 8, column = 0, columnspan = 2, sticky = 'w' + 'n', padx = 69)
                 error_msg.config(text = "* Inserir senha")
                 return
             elif ( new_passwordC.get() == "Confirmar senha" ) or (new_passwordC.get() == ""):
                 new_passwordC.grid(row = 6, column = 0, sticky = "w", padx = 70, pady = (5,2))
+                register_btn.grid(row = 8, column = 0, columnspan = 2, sticky = 'w' + 'n', padx = 69)
                 error_msg.config(text = "* Confirme a senha")
                 return
             #Confirmando se as entradas são validas  
             elif not re.match(r"[^@]+@[^@]+\.[^@]+", new_email.get()):
                 new_passwordC.grid(row = 6, column = 0, sticky = "w", padx = 70, pady = (5,2))
+                register_btn.grid(row = 8, column = 0, columnspan = 2, sticky = 'w' + 'n', padx = 69)
                 error_msg.config(text = "* Email invalido")
                 return
             elif (new_password.get() != new_passwordC.get()):
                 new_passwordC.grid(row = 6, column = 0, sticky = "w", padx = 70, pady = (5,2))
+                register_btn.grid(row = 8, column = 0, columnspan = 2, sticky = 'w' + 'n', padx = 69)
                 error_msg.config(text = "* Senhas não combinam")
                 return
             #Verificando se e-mail já existe
-            cursor.execute("SELECT email, COUNT(*) FROM Users WHERE email = %s", (new_email.get(),) )
-            msg_e = cursor.fetchone()  
+            cursor_e = db.cursor()
+            cursor_e.execute("SELECT email FROM Users WHERE email = %s", (new_email.get(), ) )
+            msg_e = cursor_e.fetchone()  
             if msg_e:
                 new_passwordC.grid(row = 6, column = 0, sticky = "w", padx = 70, pady = (5,2))
+                register_btn.grid(row = 8, column = 0, columnspan = 2, sticky = 'w' + 'n', padx = 69)
                 error_msg.config(text = "* Este e-mail já esta sendo usado")
                 return
+            cursor_e.close()
             #Verificando se usuário já existe
-            cursor.execute("SELECT username, COUNT(*) FROM Users WHERE username = %s", (new_username.get(),) )
-            msg_u = cursor.fetchone()  
+            cursor_u = db.cursor()
+            cursor_u.execute("SELECT username FROM Users WHERE username = %s", (new_username.get(), ) )
+            msg_u = cursor_u.fetchone()  
             if msg_u:
                 new_passwordC.grid(row = 6, column = 0, sticky = "w", padx = 70, pady = (5,2))
+                register_btn.grid(row = 8, column = 0, columnspan = 2, sticky = 'w' + 'n', padx = 69)
                 error_msg.config(text = "* Este usuário já esta sendo usado")
                 return
+            cursor_u.close()
             #Está tudo certo, inserir usuário no db
             add_user = """INSERT INTO Users
                         (email, name, username, password)
@@ -317,7 +330,7 @@ class RegisterWindow(tk.Frame):
             return
                 
         register_btn = tk.Button(self, text = "Criar", command = criar_Conta, font = ("Montserrat"), bg = forest_Green, activebackground =  "#01695d", width = 27)
-        register_btn.grid(row = 8, column = 0, columnspan = 2, sticky = 'w', padx = 69)
+        register_btn.grid(row = 7, column = 0, columnspan = 2, sticky = 'w' + 'n', padx = 69)
 
 class ForgotPWindow(tk.Frame):
     def __init__(self, master, controller):
