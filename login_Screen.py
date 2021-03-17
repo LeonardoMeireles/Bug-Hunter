@@ -3,6 +3,13 @@ import re
 import tkinter as tk
 from PIL import ImageTk, Image
 
+import os
+from os.path import join, dirname
+from dotenv import load_dotenv
+
+dotenv_file = join(dirname(__file__), '.env')
+load_dotenv(dotenv_file)
+
 import mysql.connector
 
 #Color Palette: 
@@ -12,13 +19,19 @@ black = "#030303"
 lime_Green = "#6ECB5A"
 red = "#b80018"
 
+DB_HOST = os.environ.get("DB_HOST")
+DB_USER = os.environ.get("DB_USER")
+DB_PASS = os.environ.get("DB_PASS")
+DB_NAME = os.environ.get("DB_NAME")
+DB_PORT = os.environ.get("DB_PORT")
+
 #Conectando ao Banco de Dados
 db = mysql.connector.connect(
-        host="remotemysql.com",
-        user="K31HAiTnbo",
-        password ="v36iANlNw8",
-        database = "K31HAiTnbo",
-        port = "3306"
+        host=DB_HOST,
+        user=DB_USER,
+        password=DB_PASS,
+        database=DB_NAME,
+        port=DB_PORT,
     )
 
 cursor = db.cursor()
