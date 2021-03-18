@@ -2,7 +2,8 @@ import tkinter as tk
 from PIL import ImageTk, Image
 
 import re
-import random
+
+import secrets
 import hashlib
 
 import os
@@ -39,7 +40,7 @@ db = mysql.connector.connect(
 cursor = db.cursor()
 
 #Criando a Table para guardar informações de Login
-#cursor.execute("CREATE TABLE Users (user_id INT AUTO_INCREMENT PRIMARY KEY,name VARCHAR(255), username VARCHAR(50),email VARCHAR(255),salt VARCHAR(16), hash VARCHAR(512))")
+#cursor.execute("CREATE TABLE Users (user_id INT AUTO_INCREMENT PRIMARY KEY, email VARCHAR(255), name VARCHAR(255), username VARCHAR(50), salt VARCHAR(16), hash VARCHAR(512))")
 
 class BugHutner(tk.Tk):
     def __init__(self, *args, **kwargs):
@@ -156,8 +157,8 @@ class LoginWindow(tk.Frame):
         
         #Botão de login
         def login():
-            username = username_in.get()
-            password = password_in.get()
+            username = str(username_in.get())
+            password = str(password_in.get())
             #Não foi inserido usuário
             if (username == "Usuário") or (username == ""):
                 u_errormsg.config(text = "* Inserir usuário")
@@ -176,10 +177,14 @@ class LoginWindow(tk.Frame):
                 u_errormsg.config(text = "* Este usuário não existe")
                 return
             #Checando senha
-            cursor_p = db.cursor()
-            cursor_p.execute("SELECT password FROM Users WHERE username = %s", (username, ) )
-            msg_u = cursor_u.fetchone()  
-            if msg_u[0] != password:
+            cursor_sh = db.cursor()
+            cursor_sh.execute("SELECT salt, hash FROM Users WHERE username = %s", (username, ) )
+            sh = cursor_u.fetchone() #salt e hash do usuário
+            salt = sh[0]
+            hash = sh[1]
+            cursor_sh.close()
+            check_p = hashlib.sha512( salt.encode('ascii') + password.encode('ascii') ).hexdigest()
+            if check_p != hash:
                 p_errormsg.config(text = "* Senha incorreta")
                 return
             #Login autorizado
@@ -299,7 +304,25 @@ class RegisterWindow(tk.Frame):
         error_msg = tk.Label(self, text = "", background = teal_Green, fg = red)
         error_msg.grid(row = 7, column = 0, sticky = "w", padx = 70)
 
-        #Botão para criar a conta
+        #Função para limpar todas as entrys
+        def limpar_entrys():
+            new_email.delete(0, tk.END)
+            new_name.delete(0, tk.END)
+            new_username.delete(0, tk.END)
+            new_password.delete(0, tk.END)
+            new_passwordC.delete(0, tk.END)
+            new_email.insert(0, "E-mail")
+            new_email.config(fg = "#c2c2c2")
+            new_name.insert(0, "Nome")
+            new_name.config(fg = "#c2c2c2")
+            new_username.insert(0, "Usuário")
+            new_username.config(fg = "#c2c2c2")
+            new_password.insert(0, "Senha")
+            new_password.config(fg = "#c2c2c2", show = "")
+            new_passwordC.insert(0, "Confirmar senha")
+            new_passwordC.config(fg = "#c2c2c2", show = "")
+
+        #Botão para criar a conta    
         def criar_Conta():
             #Confirmando se o usuário prencheu as entradas necessárias
             error_msg.config(text = "")
@@ -360,12 +383,21 @@ class RegisterWindow(tk.Frame):
                 return
             cursor_u.close()
             #Está tudo certo, inserir usuário no db
+
+            #Formando um salt para a senha do usuário
+            salt = secrets.token_hex(8).encode('ascii')
+            #Aplicando hash na senha
+            hash = hashlib.sha512( salt + str(new_password.get()).encode('ascii') ).hexdigest()
+            #Armazenando tudo no db
             add_user = """INSERT INTO Users
-                        (email, name, username, password)
-                        VALUES (%s, %s, %s, %s)"""
-            user_data = (str(new_email.get()), str(new_name.get()), str(new_username.get()), str(new_password.get()) )
+                        (email, name, username, salt, hash)
+                        VALUES (%s, %s, %s, %s, %s)"""
+            user_data = (str(new_email.get()), str(new_name.get()), str(new_username.get()), salt, hash )
             cursor.execute(add_user, user_data)
             db.commit()
+            error_msg.config(text = "Cadastro conluido!", fg = "#002e29")
+            limpar_entrys()
+            back_btn.invoke()
             return
                 
         register_btn = tk.Button(self, text = "Criar", command = criar_Conta, font = ("Montserrat"), bg = forest_Green, activebackground =  "#01695d", width = 27)
