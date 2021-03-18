@@ -1,7 +1,9 @@
-import re
-
 import tkinter as tk
 from PIL import ImageTk, Image
+
+import re
+import random
+import hashlib
 
 import os
 from os.path import join, dirname
@@ -37,7 +39,7 @@ db = mysql.connector.connect(
 cursor = db.cursor()
 
 #Criando a Table para guardar informações de Login
-#cursor.execute("CREATE TABLE Users (user_id INT AUTO_INCREMENT PRIMARY KEY,name VARCHAR(255), username VARCHAR(50),email VARCHAR(255),password VARCHAR(255))")
+#cursor.execute("CREATE TABLE Users (user_id INT AUTO_INCREMENT PRIMARY KEY,name VARCHAR(255), username VARCHAR(50),email VARCHAR(255),salt VARCHAR(16), hash VARCHAR(512))")
 
 class BugHutner(tk.Tk):
     def __init__(self, *args, **kwargs):
@@ -101,11 +103,11 @@ class LoginWindow(tk.Frame):
         username_in.insert(0, "Usuário")
         username_in.bind("<FocusIn>", holder_UText)
         username_in.bind("<FocusOut>", holder_UText)
-        username_in.grid(row = 1, column = 0, columnspan = 2, sticky = 'w', padx = 32, pady = 10)
+        username_in.grid(row = 1, column = 0, columnspan = 2, sticky = 'w', padx = 32, pady = (10,0))
 
         self.user_Image = tk.PhotoImage(file = "Assets/user.png")
         user_icon = tk.Label(self, image = self.user_Image, bd = 0, padx = 100, background = teal_Green, activebackground  = teal_Green)
-        user_icon.grid(row = 1, column = 0, sticky = 'w')
+        user_icon.grid(row = 1, column = 0, sticky = 'w', pady = (10,0))
 
         #Criando a entrada para a senha
         def holder_PText(event):
@@ -113,9 +115,11 @@ class LoginWindow(tk.Frame):
             if current == "Senha":
                 password_in.delete(0, tk.END)
                 password_in.config(fg = black)
+                password_in.config(show = "*")
             elif current == "":
                 password_in.insert(0, "Senha")
                 password_in.config(fg = "#c2c2c2")
+                password_in.config(show = "")
 
 
 
@@ -123,15 +127,15 @@ class LoginWindow(tk.Frame):
         password_in.insert(0, "Senha")
         password_in.bind("<FocusIn>", holder_PText)
         password_in.bind("<FocusOut>", holder_PText)
-        password_in.grid(row = 3, column = 0, columnspan = 2, sticky = 'n'+'w'+'e'+'s', padx = 32, pady = (20,30))
+        password_in.grid(row = 2, column = 0, columnspan = 2, sticky = 'n'+'w'+'e', padx = 32, pady = (30,0), ipady = 0)
 
         self.password_Image = tk.PhotoImage(file = "Assets/password.png")
         password_icon = tk.Label(self, image = self.password_Image, bd = 0, padx = 100, background = teal_Green, activebackground  = teal_Green)
-        password_icon.grid(row = 3, column = 0, sticky = 'w' + 'n', pady = (17,0))
+        password_icon.grid(row = 2, column = 0, sticky = 'w' + 'n', pady = (28,0))
 
         #Botão que redireciona para se registrar
         forgotP_btn = tk.Button(self, text = "Esqueci a senha", command = lambda: controller.show_frame("ForgotPWindow"),
-                                font = ("Montserrat",10), bg = teal_Green, fg = "#002e29", activebackground =  "#01695d",  borderwidth = 0)
+                                font = ("Montserrat",10), bg = teal_Green, fg = "#002e29", activebackground =  teal_Green,  borderwidth = 0)
         forgotP_btn.grid(row = 5, column = 1, padx = 15, sticky = 'w')
 
         #Botão de lembrar desse usuário
@@ -142,29 +146,51 @@ class LoginWindow(tk.Frame):
         remember_box.deselect()
         remember_box.grid(row = 5, column = 0, sticky = 'w', padx = 4)
 
+        #Mensagem de erro do usuário
+        u_errormsg = tk.Label(self, font = ("Montserrat",10), bg = teal_Green, fg = "#b80018")
+        u_errormsg.grid(row = 2, column = 0, columnspan = 2, sticky = 'w' + 'n', padx = 30, pady = 0)
+        
+        #Mensagem de erro da senha
+        p_errormsg = tk.Label(self, font = ("Montserrat",10), bg = teal_Green, fg = "#b80018")
+        p_errormsg.grid(row = 3, column = 0, columnspan = 2, sticky = 'w' + 'n', padx = 30, pady = 0)
+        
         #Botão de login
         def login():
             username = username_in.get()
             password = password_in.get()
-            if (username == "Usuário"): #Não foi inserido usuário
-                #Adiciona mensagem de erro e organiza widgets
-                u_errormsg = tk.Label(self, text = "* Inserir usuário", font = ("Montserrat",10), bg = teal_Green, fg = "#b80018")
-                u_errormsg.grid(row = 2, column = 0, columnspan = 2, sticky = 'w' + 'n', padx = 30, pady = 0)
-                username_in.grid(row = 1, column = 0, columnspan = 2, sticky = 'w', padx = 32, pady = (10,0))
-                user_icon.grid(row = 1, column = 0, sticky = 'w', pady = (10,0))
-                password_in.grid(row = 3, column = 0, columnspan = 2, sticky = 'n'+'w'+'e'+'s', padx = 32, pady = (0,30))
-                password_icon.grid(row = 3, column = 0, sticky = 'w' + 'n', pady = (25,5))
-            if (password == "Senha"): #Não foi inserido senha tambem
-                p_errormsg = tk.Label(self, text = "* Inserir senha", font = ("Montserrat",10), bg = teal_Green, fg = "#b80018")
-                p_errormsg.grid(row = 3, column = 0, columnspan = 2, sticky = 'w' + 'n', padx = 30, pady = 0)
-                password_in.grid(row = 2, column = 0, columnspan = 2, sticky = 'n'+'w'+'e', padx = 32, pady = (30,0), ipady = 0)
-                password_icon.grid(row = 2, column = 0, sticky = 'w' + 'n', pady = (28,0))            
-            return
-
+            #Não foi inserido usuário
+            if (username == "Usuário") or (username == ""):
+                u_errormsg.config(text = "* Inserir usuário")
+                if (password == "Senha"):
+                    p_errormsg.config(text = "* Inserir senha")
+                    return
+            #Não foi inserido senha
+            if (password == "Senha") or (password == ""):
+                p_errormsg.config(text = "* Inserir senha")
+                return
+            #Checando usuário
+            cursor_u = db.cursor()
+            cursor_u.execute("SELECT username FROM Users WHERE username = %s", (username, ) )
+            msg_u = cursor_u.fetchone()  
+            if not msg_u:
+                u_errormsg.config(text = "* Este usuário não existe")
+                return
+            #Checando senha
+            cursor_p = db.cursor()
+            cursor_p.execute("SELECT password FROM Users WHERE username = %s", (username, ) )
+            msg_u = cursor_u.fetchone()  
+            if msg_u[0] != password:
+                p_errormsg.config(text = "* Senha incorreta")
+                return
+            #Login autorizado
+            else:
+                print("Autorizo")
+                test = tk.Toplevel()
+                test.title("Teste para login")
         login_btn = tk.Button(self, text = "Login", command = login, font = ("Montserrat"), bg = forest_Green, activebackground =  "#01695d")
         login_btn.grid(row = 6, column = 0, columnspan = 2, sticky = 'w', padx = 2, pady = 10)
         login_btn.configure(height = 1, width = 33)
-
+    
         #Botão de Registrar-se
         register_btn = tk.Button(self, text = "Criar uma conta", command = lambda: controller.show_frame("RegisterWindow"),
                                 font = ("Montserrat"), bg = teal_Green, fg = "#002e29", activebackground =  teal_Green, activeforeground = black, borderwidth = 0)
