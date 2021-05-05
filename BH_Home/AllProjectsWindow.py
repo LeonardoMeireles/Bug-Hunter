@@ -160,14 +160,14 @@ class AllProjectsWindow(tk.Frame):
 
             #Status do projeto
             p_status = tk.Label(p_frame, text = project[4], font = ("Montserrat", 12), foreground = white82, borderwidth = 0, background = black, activebackground  = black,
-                                activeforeground = white82, width = 8)
-            p_status.grid(row = 0, column = 1, sticky = "nsew", padx = 48, pady = 5)
+                                activeforeground = white82, width = 12)
+            p_status.grid(row = 0, column = 1, sticky = "nsew", padx = 32, pady = 5)
             p_status.bind("<Button-1>", lambda event, a = project[1], b = project[0]: enterProject(a, b))
 
             #Categoria do projeto
             p_category = tk.Label(p_frame, text = project[3], font = ("Montserrat", 12), foreground = white82, borderwidth = 0, background = black, activebackground  = black,
                                 activeforeground = white82, width = 8)
-            p_category.grid(row = 0, column = 2, sticky = "nwse", padx = (37,30), pady = 5)
+            p_category.grid(row = 0, column = 2, sticky = "nwse", padx = (32,30), pady = 5)
             p_category.bind("<Button-1>", lambda event, a = project[1], b = project[0]: enterProject(a, b))
 
             #Data do projeto
