@@ -11,10 +11,3 @@
     A bugtracking app to jumpstart your projects!
   </p>
 </p>
-
-<!-- ABOUT THE PROJECT -->
-## About The Project
-
-[![Bug Hunter Screen Shot][product-screenshot]](Assets/Project_ScreenBH.png?raw=true)
-
-<!-- Add information here -->
