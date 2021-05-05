@@ -32,7 +32,7 @@ concluido = "#6ebd6c"
 
 
 class ProblemWindow(tk.Frame):
-    def __init__(self, master, controller, bH, user_id, last, prob_id, proj_name):
+    def __init__(self, master, controller, bH, user_id, last, prob_id, proj_name, proj_id):
         #Frame de login
         tk.Frame.__init__(self, master)
         self.controller = controller

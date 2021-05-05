@@ -22,29 +22,13 @@ black = "#121212"
 lime_Green = "#6ECB5A"
 white82 = "#dfdfdf"
 
-DB_HOST = os.environ.get("DB_HOST")
-DB_USER = os.environ.get("DB_USER")
-DB_PASS = os.environ.get("DB_PASS")
-DB_NAME = os.environ.get("DB_NAME")
-DB_PORT = os.environ.get("DB_PORT")
-
-#Conectando ao Banco de Dados
-db = mysql.connector.connect(
-        host=DB_HOST,
-        user=DB_USER,
-        password=DB_PASS,
-        database=DB_NAME,
-        port=DB_PORT,
-    )
-
-cursor = db.cursor()
-
 class HeaderMenu(tk.Frame):
     def __init__(self, master, controller, bH, user_id):
         #Header do aplicativo
         tk.Frame.__init__(self, master)
         self.controller = controller
         self.config(bg = forest_Green)
+        db = bH.db
 
         #Logo BH
         self.user_Image = tk.PhotoImage(file = "Assets/bh_Icon.png")

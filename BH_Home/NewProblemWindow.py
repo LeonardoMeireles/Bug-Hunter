@@ -31,23 +31,6 @@ planejamento = "#bbbf69"
 cancelado = "#d94f48"
 concluido = "#6ebd6c"
 
-
-
-DB_HOST = os.environ.get("DB_HOST")
-DB_USER = os.environ.get("DB_USER")
-DB_PASS = os.environ.get("DB_PASS")
-DB_NAME = os.environ.get("DB_NAME")
-DB_PORT = os.environ.get("DB_PORT")
-
-#Conectando ao Banco de Dados
-db = mysql.connector.connect(
-        host=DB_HOST,
-        user=DB_USER,
-        password=DB_PASS,
-        database=DB_NAME,
-        port=DB_PORT,
-    )
-
 class NewProblemWindow(tk.Frame):
     def __init__(self, master, controller, bH, user_id):
         #Frame de login
@@ -55,6 +38,7 @@ class NewProblemWindow(tk.Frame):
         self.controller = controller
         self.config(bg = dark_grey)
         self.user_id = user_id
+        db = bH.db
 
         #Titulo da página
         titleP = tk.Frame(self, bg = "#014039")

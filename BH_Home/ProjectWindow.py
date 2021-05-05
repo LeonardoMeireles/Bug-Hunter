@@ -11,6 +11,7 @@ except Exception as e:
     print("Algumas bibliotecas estão faltando: {}".format(e))
 
 from BH_Home.ProblemWindow import ProblemWindow
+from BH_Home.EditProjectWindow import EditProjectWindow
 
 dotenv_file = join(dirname(__file__), '.env')
 load_dotenv(dotenv_file)
@@ -28,7 +29,7 @@ white82 = "#dfdfdf"
 
 
 class ProjectWindow(tk.Frame):
-    def __init__(self, master, controller, bH, user_id, last, proj_name):
+    def __init__(self, master, controller, bH, user_id, last, proj_name, proj_id):
         #Frame de login
         tk.Frame.__init__(self, master)
         self.controller = controller
@@ -50,13 +51,25 @@ class ProjectWindow(tk.Frame):
                                 activeforeground = white82)
         typeP.grid(row = 1, column = 0, padx = 35, pady = 10, sticky = "w")
 
+        #Botão para verificar e editar as informações do projeto
+        def enterEP(proj_id):
+            bH.frames["EditProjectWindow"] = EditProjectWindow(master = bH.container, controller = self.controller, bH = bH, user_id = user_id, last = "AllProjectsWindow",
+                                                        proj_id = proj_id)
+            bH.frames["EditProjectWindow"].grid(row = 0, column = 0, sticky = "nsew", pady = (53, 0))
+            controller.show_frame("EditProjectWindow")
+
+        self.info = tk.PhotoImage(file = "Assets/User_Interface/info_button.png")
+        infoBTN = tk.Button(self, image = self.info, bd = 0, background = dark_grey, activebackground  = dark_grey, command = lambda: enterEP(proj_id))
+        infoBTN.grid(row = 1, column = 1, padx = 0, pady = (10,5), sticky = "w")
+        
+
         self.newP = tk.PhotoImage(file = "Assets/User_Interface/newproblemBtn.png")
         addP_btn = tk.Button(self, image = self.newP, bd = 0, background = dark_grey, activebackground  = dark_grey, command = lambda: controller.show_frame("NewProjectWindow"))
-        addP_btn.grid(row = 1, column = 1, padx = 10, pady = (10,5), sticky = "w")
+        addP_btn.grid(row = 1, column = 1, padx = 40, pady = (10,5), sticky = "w")
 
         self.closeIMG = tk.PhotoImage(file = "Assets/User_Interface/close.png")
         closeX = tk.Button(self, image = self.closeIMG, bd = 0, background = dark_grey, activebackground  = dark_grey, command = lambda: controller.show_frame(last))
-        closeX.grid(row = 1, column = 2, sticky = "e", pady = 20, padx = 17)
+        closeX.grid(row = 1, column = 2, sticky = "e", pady = (5,20), padx = 17)
 
         #Local que mostrara os projetos
         projectsF = tk.Frame(self, bg = black)
@@ -73,19 +86,17 @@ class ProjectWindow(tk.Frame):
         cursorAP.execute("""
                         SELECT 
                             po.problem_id,
-                            po.project_id,
                             po.name,
                             po.reporter,
                             po.status,
                             po.priority,
-                            po.description,
                             po.date
                         FROM Problems as po
                         JOIN Projects as pj
                         ON po.project_id = pj.project_id
-                        WHERE pj.name = %s
+                        WHERE pj.project_id = %s
                         ORDER BY po.problem_id DESC
-                        """, (proj_name, ))
+                        """, (proj_id, ))
         problems = cursorAP.fetchall()
         cursorAP.close()
         nomeP = tk.Label(myproblemsCF, text = "NOME DO PROBLEMA", font = ("Montserrat", 12), foreground = "#777777", borderwidth = 0, background = black, activebackground  = black,
@@ -110,7 +121,7 @@ class ProjectWindow(tk.Frame):
 
         def enterProblem(problem_id):
             bH.frames["ProblemWindow"] = ProblemWindow(master = bH.container, controller = self.controller, bH = bH, user_id = user_id, last = "AllProjectsWindow",
-                                                        prob_id = problem_id, proj_name = proj_name)
+                                                        prob_id = problem_id, proj_name = proj_name, proj_id = proj_id)
             bH.frames["ProblemWindow"].grid(row = 0, column = 0, sticky = "nsew", pady = (53, 0))
             controller.show_frame("ProblemWindow")
 
@@ -120,28 +131,28 @@ class ProjectWindow(tk.Frame):
             p_frame = tk.Frame(myproblemsCF, bg = black, height = 20, bd = 2)
 
             p_frame.grid(row = i, column = 0, sticky = "nsew")
-            name_with_space = problem[2].replace("_", " ")
+            name_with_space = problem[1].replace("_", " ")
             p_name = tk.Label(p_frame, text = name_with_space, font = ("Montserrat", 12), foreground = white82, borderwidth = 0, background = black, activebackground  = black,
                                 activeforeground = white82, width = 15)
             p_name.grid(row = 0, column = 0, sticky = "nsew", padx = (22, 25), pady = 5)
             p_name.bind("<Button-1>", lambda event, a = problem[0]: enterProblem(a))
 
-            p_reporter = tk.Label(p_frame, text = problem[3], font = ("Montserrat", 12), foreground = white82, borderwidth = 0, background = black, activebackground  = black,
+            p_reporter = tk.Label(p_frame, text = problem[2], font = ("Montserrat", 12), foreground = white82, borderwidth = 0, background = black, activebackground  = black,
                                 activeforeground = white82, width = 8)
             p_reporter.grid(row = 0, column = 1, sticky = "nsew", padx = (47,20), pady = 5)
             p_reporter.bind("<Button-1>", lambda event, a = problem[0]: enterProblem(a))
 
-            p_status = tk.Label(p_frame, text = problem[4], font = ("Montserrat", 12), foreground = white82, borderwidth = 0, background = black, activebackground  = black,
+            p_status = tk.Label(p_frame, text = problem[3], font = ("Montserrat", 12), foreground = white82, borderwidth = 0, background = black, activebackground  = black,
                                 activeforeground = white82, width = 15)
             p_status.grid(row = 0, column = 2, sticky = "nwse", padx = (5,15), pady = 5)
             p_status.bind("<Button-1>", lambda event, a = problem[0]: enterProblem(a))
 
-            p_priority = tk.Label(p_frame, text = problem[5], font = ("Montserrat", 12), foreground = white82, borderwidth = 0, background = black, activebackground  = black,
+            p_priority = tk.Label(p_frame, text = problem[4], font = ("Montserrat", 12), foreground = white82, borderwidth = 0, background = black, activebackground  = black,
                                 activeforeground = white82, width = 10)
             p_priority.grid(row = 0, column = 3, sticky = "nwse", padx = (28, 40), pady = 5)
             p_priority.bind("<Button-1>", lambda event, a = problem[0]: enterProblem(a))
 
-            p_date = tk.Label(p_frame, text = problem[7], font = ("Montserrat", 12), foreground = white82, borderwidth = 0, background = black, activebackground  = black,
+            p_date = tk.Label(p_frame, text = problem[5], font = ("Montserrat", 12), foreground = white82, borderwidth = 0, background = black, activebackground  = black,
                                 activeforeground = white82, width = 10)
             p_date.grid(row = 0, column = 4, sticky = "nsew", padx = 52, pady = 5)
             p_date.bind("<Button-1>", lambda event, a = problem[0]: enterProblem(a))

@@ -26,30 +26,13 @@ grey = "#3a3d45"
 dark_grey = "#202021"
 white82 = "#dfdfdf"
 
-
-DB_HOST = os.environ.get("DB_HOST")
-DB_USER = os.environ.get("DB_USER")
-DB_PASS = os.environ.get("DB_PASS")
-DB_NAME = os.environ.get("DB_NAME")
-DB_PORT = os.environ.get("DB_PORT")
-
-#Conectando ao Banco de Dados
-db = mysql.connector.connect(
-        host=DB_HOST,
-        user=DB_USER,
-        password=DB_PASS,
-        database=DB_NAME,
-        port=DB_PORT,
-    )
-
-cursor = db.cursor()
-
 class AllProjectsWindow(tk.Frame):
     def __init__(self, master, controller, bH, user_id):
         #Frame de login
         tk.Frame.__init__(self, master)
         self.controller = controller
         self.config(bg = dark_grey)
+        db = bH.db
 
         #Titulo da página
         titleP = tk.Frame(self, bg = "#014039")
@@ -58,7 +41,7 @@ class AllProjectsWindow(tk.Frame):
         page_name = tk.Label(titleP, text = "Projetos", font = ("Montserrat SemiBold", 10), fg = "#d3d3d3", bg = "#014039")
         page_name.grid(row = 0, column = 0, sticky = "nsw", padx = 16)
 
-        #Seleção do tipo de projeto
+        #Seleção do tipo de projeto / AINDA NÃO IMPLEMENTADO
         def my_proj(typeP):
             typeP.config( text = "Meus Projetos")
             return
@@ -88,11 +71,11 @@ class AllProjectsWindow(tk.Frame):
         addP_btn = tk.Button(self, image = self.newP, bd = 0, background = dark_grey, activebackground  = dark_grey, command = lambda: controller.show_frame("NewProjectWindow"))
         addP_btn.grid(row = 1, column = 1, padx = 16, pady = (10,5))
 
-        #Local que mostrara os projetos
-
+        #Metodo para dar scroll nos projetos
         def _on_mousewheel(event):
           self.canvasP.yview_scroll(int(-1*(event.delta/120)), "units")
 
+        #Local que mostrara os projetos
         projectsF = tk.Frame(self, bg = black, bd = 0)
         projectsF.grid(row = 2, column = 0, sticky = "nsew", padx = 17, pady = (5,20), columnspan = 4)
         self.rowconfigure(2, weight = 1)
@@ -124,8 +107,9 @@ class AllProjectsWindow(tk.Frame):
                                 activeforeground = "#777777" )
         nomeP.grid(row = 0, column = 0, padx = 600, sticky = "nw")
 
-        def enterProject(project_name):
-            bH.frames["ProjectWindow"] = ProjectWindow(master = bH.container, controller = self.controller, bH = bH, user_id = user_id, last = "AllProjectsWindow",  proj_name = project_name)
+        def enterProject(project_name, proj_id):
+            bH.frames["ProjectWindow"] = ProjectWindow(master = bH.container, controller = self.controller, bH = bH, user_id = user_id,
+                                                        last = "AllProjectsWindow",  proj_name = project_name, proj_id = proj_id)
             bH.frames["ProjectWindow"].grid(row = 0, column = 0, sticky = "nsew", pady = (53, 0))
             controller.show_frame("ProjectWindow")
 
@@ -133,6 +117,7 @@ class AllProjectsWindow(tk.Frame):
         self.joinpIMG = tk.PhotoImage(file = "Assets/User_Interface/joinprojectBtn.png")
         self.leavepIMG = tk.PhotoImage(file = "Assets/User_Interface/leaveprojectBtn.png")
 
+        #Metodo para se juntar ao projeto
         def join_project(user_id, jlPBTN, project_id):
             cursorJoin = db.cursor()
             addUP = """INSERT INTO User_Projects
@@ -146,6 +131,7 @@ class AllProjectsWindow(tk.Frame):
             jlPBTN.bind("<Button-1>", lambda event, a = user_id, b = jlPBTN, c = project[0]: leave_project(a, b, c))
             return
         
+        #Metodo para sair do projeto
         def leave_project(user_id, jlPBTN, project_id):
             cursorLeave = db.cursor()
             addUP = """DELETE FROM User_Projects
@@ -164,25 +150,31 @@ class AllProjectsWindow(tk.Frame):
             p_frame = tk.Frame(myproblemsCF, bg = black, height = 20, bd = 2)
 
             p_frame.grid(row = i, column = 0, sticky = "nsew")
+
+            #Nome do projeto
             name_with_space = project[1].replace("_", " ")
             p_name = tk.Label(p_frame, text = name_with_space, font = ("Montserrat", 12), foreground = white82, borderwidth = 0, background = black, activebackground  = black,
                                 activeforeground = white82, width = 15)
             p_name.grid(row = 0, column = 0, sticky = "nsew", padx = (10, 30), pady = 5)
-            p_name.bind("<Button-1>", lambda event, a = project[1]: enterProject(a))
+            p_name.bind("<Button-1>", lambda event, a = project[1], b = project[0]: enterProject(a, b))
 
+            #Status do projeto
             p_status = tk.Label(p_frame, text = project[4], font = ("Montserrat", 12), foreground = white82, borderwidth = 0, background = black, activebackground  = black,
                                 activeforeground = white82, width = 8)
             p_status.grid(row = 0, column = 1, sticky = "nsew", padx = 48, pady = 5)
-            p_status.bind("<Button-1>", lambda event, a = project[1]: enterProject(a))
+            p_status.bind("<Button-1>", lambda event, a = project[1], b = project[0]: enterProject(a, b))
 
+            #Categoria do projeto
             p_category = tk.Label(p_frame, text = project[3], font = ("Montserrat", 12), foreground = white82, borderwidth = 0, background = black, activebackground  = black,
                                 activeforeground = white82, width = 8)
             p_category.grid(row = 0, column = 2, sticky = "nwse", padx = (37,30), pady = 5)
-            p_category.bind("<Button-1>", lambda event, a = project[1]: enterProject(a))
+            p_category.bind("<Button-1>", lambda event, a = project[1], b = project[0]: enterProject(a, b))
 
+            #Data do projeto
             p_date = tk.Label(p_frame, text = project[5], font = ("Montserrat", 12), foreground = white82, borderwidth = 0, background = black, activebackground  = black,
                                 activeforeground = white82, width = 10)
             p_date.grid(row = 0, column = 3, sticky = "nsew", padx = (78,80), pady = 5)
+            p_date.bind("<Button-1>", lambda event, a = project[1], b = project[0]: enterProject(a, b))
 
             cursorCheck = db.cursor(buffered=True)
             cursorCheck.execute("SELECT entry_id FROM User_Projects WHERE user_id = %s AND project_id = %s", (user_id, project[0], ) )
@@ -196,23 +188,23 @@ class AllProjectsWindow(tk.Frame):
                 jlPBTN = tk.Button(p_frame, image = self.leavepIMG, bd = 0, background = black, activebackground  = black)
                 jlPBTN.bind("<Button-1>", lambda event, a = user_id, b = jlPBTN, c = project[0]: leave_project(a, b, c))
                 jlPBTN.grid(row = 0, column = 4, sticky = "nsew", padx = 20, pady = 5)
-
-            p_date.bind("<Button-1>", lambda event, a = project[1]: enterProject(a))
             
             p_frame.bind("<Enter>",lambda event, a=p_name, b=p_status, c=p_category, d=p_date: 
                             changeOnHover(a, b, c, d))
             p_frame.bind("<Leave>",lambda event, a=p_name, b=p_status, c=p_category, d=p_date: 
                             changeOnLeave(a, b, c, d))
-            p_frame.bind("<Button-1>", lambda event, a = project[1]: enterProject(a))
+            p_frame.bind("<Button-1>", lambda event, a = project[1], b = project[0]: enterProject(a, b))
             checkP = None
             i += 1
 
+#Muda a cor quando o cursor passa por cima de certo projeto
 def changeOnHover(a, b, c, d):
     a.config(fg = forest_Green)
     b.config(fg = forest_Green)
     c.config(fg = forest_Green)
     d.config(fg = forest_Green)
-  
+
+#Muda a cor quando o cursor passa por cima de certo projeto
 def changeOnLeave(a, b, c, d):
     a.config(fg = white82)
     b.config(fg = white82)

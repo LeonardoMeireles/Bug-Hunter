@@ -26,29 +26,13 @@ grey = "#3a3d45"
 dark_grey = "#202021"
 white82 = "#dfdfdf"
 
-DB_HOST = os.environ.get("DB_HOST")
-DB_USER = os.environ.get("DB_USER")
-DB_PASS = os.environ.get("DB_PASS")
-DB_NAME = os.environ.get("DB_NAME")
-DB_PORT = os.environ.get("DB_PORT")
-
-#Conectando ao Banco de Dados
-db = mysql.connector.connect(
-        host=DB_HOST,
-        user=DB_USER,
-        password=DB_PASS,
-        database=DB_NAME,
-        port=DB_PORT,
-    )
-
-cursor = db.cursor()
-
 class HomeWindow(tk.Frame):
     def __init__(self, master, controller, bH, user_id):
         #Frame de login
         tk.Frame.__init__(self, master)
         self.controller = controller
         self.config(bg = dark_grey)
+        db = bH.db
 
         #Titulo da págin
         titleP = tk.Frame(self, bg = "#014039")
@@ -138,8 +122,8 @@ class HomeWindow(tk.Frame):
                 
 
                 p_projectName = tk.Label(p_frame, text = problem[2], font = ("Montserrat", 10), foreground = "#bfbfbf", borderwidth = 0, background = black,
-                                    activeforeground = white82, width = 8)
-                p_projectName.grid(row = 1, column = 0, sticky = "nw", padx = 18, pady = 2)
+                                    activeforeground = white82)
+                p_projectName.grid(row = 1, column = 0, sticky = "nw", padx = 19, pady = 2)
                 p_projectName.bind("<Button-1>", lambda event, a = pID[0], b = problem[2] : enterProblem(a, b))
             
                 p_frame.bind("<Enter>",lambda event, a=p_name, b=p_date, c=p_projectName: 
@@ -253,12 +237,12 @@ class HomeWindow(tk.Frame):
             canvasFrameAP.grid(row = 1, column = 0, ipadx = 5)
 
         def showAP(arrowAP, myproblemsF, canvasFrameMP):
-            arrowAP.config( image = self.downArrow, command = lambda: hideP(arrowAP,myproblemsF, mpCF))
+            arrowAP.config( image = self.downArrow, command = lambda: hideAP(arrowAP,allproblemsF, apCF))
             return_APF()
             return
 
         def hideAP(arrowAP, myproblemsF, canvasFrameMP):
-            arrowAP.config( image = self.upArrow, command = lambda: showP(arrowAP, myproblemsF, mpCF))
+            arrowAP.config( image = self.upArrow, command = lambda: showAP(arrowAP, allproblemsF, apCF))
             forget_APF()
             return
 
