@@ -1,4 +1,13 @@
-<h1 align="center">Bug Hunter</h1>
+<!-- PROJECT LOGO -->
+<br />
+<p align="center">
+  <a href="https://github.com/LeonardoMeireles/Bug-Hunter">
+    <img src="Assets/bh_Icon.png" alt="Logo" width="80" height="80">
+  </a>
 
-<p align="center">Um aplicativo de Bug Tracking, feito em Python através do Tkinter e MYSQL.</p>
+  <h3 align="center">Bug Hunter</h3>
 
+  <p align="center">
+    A bugtracking app to jumpstart your projects!
+  </p>
+</p>
