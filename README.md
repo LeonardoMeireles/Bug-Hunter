@@ -9,10 +9,13 @@
 
   <p align="center">
     Um aplicativo de bug tracking para comandar e organizar os seus projetos!
+    <br />
+    <a href="https://github.com/LeonardoMeireles/Bug-Hunter"><strong>Explore os docs »</strong></a>
+    <br />
   </p>
 </p>
 
-<!-- ABOUT THE PROJECT -->
+<!-- Informações do projeto -->
 ## Informações Do Projeto
 
 ![Bug Hunter Screen Shot][BH-screenshot]
