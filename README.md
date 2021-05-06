@@ -26,7 +26,12 @@ O Bug Hunter é um projeto de estudo para me aprimorar em Python e MYSQL. O seu 
 * [Tkinter](https://www.devmedia.com.br/tkinter-interfaces-graficas-em-python/33956)
 * [MYSQL](https://www.mysql.com/)
 
+<!-- CONTACT -->
+## Contact
 
+Leonardo Meireles da Silva - [Linkedin](www.linkedin.com/in/leonardo-meireles-da-silva) - leo.meireles@usp.br
+
+Project Link: [https://github.com/LeonardoMeireles/Bug-Hunter](https://github.com/LeonardoMeireles/Bug-Hunter)
 
 
 [BH-screenshot]: Assets/Project_ScreenBH.png
