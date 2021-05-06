@@ -8,6 +8,22 @@
   <h3 align="center">Bug Hunter</h3>
 
   <p align="center">
-    A bugtracking app to jumpstart your projects!
+    Um aplicativo de bug tracking para comandar e organizar os seus projetos!
   </p>
 </p>
+
+<!-- ABOUT THE PROJECT -->
+## Informações Do Projeto
+
+[![Bug Hunter Screen Shot][BH-screenshot]]
+
+O Bug Hunter é um projeto de estudo para me aprimorar em Python e MYSQL. O seu propósito do Bug Hunter ou BH, é ser um sistema de Bug Tracking que pode ser facilmente modificado e especializado para as necessidades de qualquer empresa.
+
+### Feito Com
+* [Tkinter]
+* [MYSQL](https://www.mysql.com/)
+
+
+
+
+[BH-screenshot]: Assets/Project_ScreenBH.png
