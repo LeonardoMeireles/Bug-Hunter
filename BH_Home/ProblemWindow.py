@@ -4,6 +4,7 @@ try:
     import tkinter.scrolledtext as scrolledtext
     from os.path import dirname, join
     import sys
+    import datetime
 
     from dotenv import load_dotenv
     from PIL import Image, ImageTk
@@ -54,10 +55,10 @@ class ProblemWindow(tk.Frame):
         page_name.grid(row = 0, column = 0, sticky = "nsw", padx = 20)
 
         self.rightArrow = tk.PhotoImage(file = "Assets/User_Interface/right_arrow.png")
-        typeP = tk.Label(self, text = problem[2], font = ("Montserrat", 16), foreground = white82, borderwidth = 0, background = dark_grey, activebackground  = dark_grey,
+        typeP = tk.Label(self, text = problem[2].replace("_", " "), font = ("Montserrat", 16), foreground = white82, borderwidth = 0, background = dark_grey, activebackground  = dark_grey,
                                 activeforeground = white82)
         typeP.grid(row = 1, column = 0, padx = 20, pady = (12,5), sticky = "w")
-        reporterL = tk.Label(self, text = "Por " + problem[3] + " | " + proj_name, font = ("Montserrat", 12), foreground = "#a3a3a3", borderwidth = 0, background = dark_grey, activebackground  = dark_grey,
+        reporterL = tk.Label(self, text = "Por " + problem[3].replace("_", " ") + " | " + proj_name.replace("_", " "), font = ("Montserrat", 12), foreground = "#a3a3a3", borderwidth = 0, background = dark_grey, activebackground  = dark_grey,
                                 activeforeground = white82)
         reporterL.grid(row = 2, column = 0, padx = 20, pady = (0,10), sticky = "nw")
 
@@ -224,9 +225,11 @@ class ProblemWindow(tk.Frame):
             c_commentE = tk.Text(c_commentF, undo=True, bg = dark_grey, fg = white82, bd = 0, width = 50, height = 5)
             c_commentE.config( font = ("Montserrat", 12) )
             c_commentE.insert(tk.END, comment[1])
+            c_commentE.config(state = tk.DISABLED)
             c_commentE.pack()
 
-            c_date = tk.Label(c_frame, text = comment[4], font = ("Montserrat", 10), foreground = "#bfbfbf", borderwidth = 0, background = dark_grey, activebackground  = dark_grey,
+            dt = datetime.datetime.strptime(str(comment[4]), '%Y-%m-%d').strftime('%m/%d/%Y')
+            c_date = tk.Label(c_frame, text = dt, font = ("Montserrat", 10), foreground = "#bfbfbf", borderwidth = 0, background = dark_grey, activebackground  = dark_grey,
                                 activeforeground = white82, width = 8)
             c_date.grid(row = 2, column = 0, sticky = "nwse", padx = 20, pady = 5)
 
@@ -249,8 +252,7 @@ class ProblemWindow(tk.Frame):
             Ncomment = new_commentE.get("1.0", tk.END)
 
             #A data atual
-            from datetime import date
-            today = date.today()
+            today = datetime.datetime.today()
             d1 = today.strftime("%d/%m/%Y")
             
             #Adicionando o comentário na db
@@ -268,13 +270,13 @@ class ProblemWindow(tk.Frame):
             cursorU.close()
 
 
-            c_frame = tk.Frame(commentsF, bg = black, height = 20, bd = 2)
-            c_frame.grid(row = i, column = 0, sticky = "nsew")
+            c_frame = tk.Frame(commentsF, bg = dark_grey, height = 20, bd = 2)
+            c_frame.grid(row = i, column = 0, sticky = "nsew", pady = 5)
 
-            c_userIMG = tk.Label(c_frame, image = self.user_img, bd = 0, background = black, activebackground  = white82)
-            c_userIMG.grid(row = 0, column = 0, sticky = "nsew", padx = (22, 5), pady = 12)
+            c_userIMG = tk.Label(c_frame, image = self.user_img, bd = 0, background = dark_grey, activebackground  = white82)
+            c_userIMG.grid(row = 0, column = 0, sticky = "nw", padx = (10,0), pady = 12)
 
-            c_Uname = tk.Label(c_frame, text = user[2], font = ("Montserrat SemiBold", 14), foreground = white82, borderwidth = 0, background = black, activebackground  = black,
+            c_Uname = tk.Label(c_frame, text = user[2], font = ("Montserrat SemiBold", 14), foreground = white82, borderwidth = 0, background = dark_grey, activebackground  = dark_grey,
                                 activeforeground = white82)
             c_Uname.grid(row = 0, column = 0, sticky = "nw", padx = 42, pady = 5)
 
@@ -284,15 +286,17 @@ class ProblemWindow(tk.Frame):
             c_commentE = tk.Text(c_commentF, undo=True, bg = dark_grey, fg = white82, bd = 0, width = 50, height = 5)
             c_commentE.config( font = ("Montserrat", 12) )
             c_commentE.insert(tk.END, Ncomment)
+            c_commentE.config(state = tk.DISABLED)
             c_commentE.pack()
 
-            c_date = tk.Label(c_frame, text = str(d1), font = ("Montserrat", 10), foreground = dark_grey, borderwidth = 0, background = black, activebackground  = black,
+            c_date = tk.Label(c_frame, text = str(d1), font = ("Montserrat", 10), foreground = "#bfbfbf", borderwidth = 0, background = dark_grey, activebackground  = dark_grey,
                                 activeforeground = white82, width = 8)
-            c_date.grid(row = 2, column = 1, sticky = "nwse", padx = 10, pady = 5)
+            c_date.grid(row = 2, column = 0, sticky = "nwse", padx = 20, pady = 5)
 
             i += 1
 
-            NCommentF.grid(row = i, column = 0, padx = 18, pady = 10, sticky = "nsew")
+            NCommentF.grid(row = i, column = 0, sticky = "nsew", pady = 5)
+            new_commentE.delete('1.0', tk.END)
 
         #Botão de adicionar comentário
         self.IMGAddCommentBtn = tk.PhotoImage(file = "Assets/User_Interface/addComment.png")

@@ -122,11 +122,11 @@ class NewProblemWindow(tk.Frame):
             return
 
         def defG(statusB):
-            statusB.config(text = "Grave", bg = ativo, activebackground  = ativo)
+            statusB.config(text = "Grave", bg = atrasado, activebackground  = atrasado)
             return
         
         def defC(statusB):
-            statusB.config(text = "Crítico", bg = planejamento, activebackground  = planejamento)
+            statusB.config(text = "Crítico", bg = cancelado, activebackground  = cancelado)
             return
 
         prioridadeS = tk.StringVar()

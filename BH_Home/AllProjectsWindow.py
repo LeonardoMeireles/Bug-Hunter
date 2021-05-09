@@ -6,6 +6,7 @@ try:
 
     from dotenv import load_dotenv
     from PIL import Image, ImageTk
+    import datetime
 
 except Exception as e:
     print("Algumas bibliotecas estão faltando: {}".format(e))
@@ -57,6 +58,7 @@ class AllProjectsWindow(tk.Frame):
         self.rightArrow = tk.PhotoImage(file = "Assets/User_Interface/right_arrow.png")
         arrowR = tk.Label(self, image = self.rightArrow, bd = 0, background = dark_grey, activebackground  = dark_grey)
         arrowR.grid(row = 1, column = 0, padx = 20, pady = 10, sticky = "w")
+        
         typeP = tk.Menubutton(self, text = "Todos os Projetos", font = ("Montserrat", 14), foreground = white82, borderwidth = 0, background = dark_grey, activebackground  = dark_grey,
                                 activeforeground = white82)
         typeP.grid(row = 1, column = 0, padx = 35, pady = 10, sticky = "w")
@@ -66,6 +68,10 @@ class AllProjectsWindow(tk.Frame):
         typeP.menu.add_radiobutton(label = "Meus Projetos", font = ("Montserrat", 9), command = lambda: my_proj(typeP), selectcolor = teal_Green)
         typeP.menu.add_radiobutton(label = "Projetos Concluidos", font = ("Montserrat", 9), command = lambda: finished_proj(typeP), selectcolor = teal_Green)
         typeP.menu.invoke(0)
+
+        self.reload_img = tk.PhotoImage(file = "Assets/User_Interface/reload.png")
+        reloadPButton = tk.Button(self, image = self.reload_img, bd = 0, background = dark_grey, activebackground  = dark_grey, command = lambda: refreshP(myproblemsCF))
+        reloadPButton.grid(row = 1, column = 0, sticky = "w", padx = 220, pady = 12)
 
         self.newP = tk.PhotoImage(file = "Assets/User_Interface/newprojectBtn.png")
         addP_btn = tk.Button(self, image = self.newP, bd = 0, background = dark_grey, activebackground  = dark_grey, command = lambda: controller.show_frame("NewProjectWindow"))
@@ -128,7 +134,7 @@ class AllProjectsWindow(tk.Frame):
             db.commit()
             cursorJoin.close()
             jlPBTN.config(image = self.leavepIMG)
-            jlPBTN.bind("<Button-1>", lambda event, a = user_id, b = jlPBTN, c = project[0]: leave_project(a, b, c))
+            jlPBTN.bind("<Button-1>", lambda event, a = user_id, b = jlPBTN, c = project_id: leave_project(a, b, c))
             return
         
         #Metodo para sair do projeto
@@ -141,61 +147,70 @@ class AllProjectsWindow(tk.Frame):
             db.commit()
             cursorLeave.close()
             jlPBTN.config(image = self.joinpIMG)
-            jlPBTN.bind("<Button-1>", lambda event, a = user_id, b = jlPBTN, c = project[0]: join_project(a, b, c))
+            jlPBTN.bind("<Button-1>", lambda event, a = user_id, b = jlPBTN, c = project_id: join_project(a, b, c))
             return
 
         #Alocando os projetos
-        i = 1
-        for project in projects:
-            p_frame = tk.Frame(myproblemsCF, bg = black, height = 20, bd = 2)
+        def refreshP(myproblemsCF):
+            cursorRP = db.cursor()
+            cursorRP.execute("SELECT * from Projects ORDER BY date ASC")
+            projects = cursorRP.fetchall()
+            cursorRP.close()
 
-            p_frame.grid(row = i, column = 0, sticky = "nsew")
+            i = 1
+            for project in projects:
+                p_frame = tk.Frame(myproblemsCF, bg = black, height = 20, bd = 2)
 
-            #Nome do projeto
-            name_with_space = project[1].replace("_", " ")
-            p_name = tk.Label(p_frame, text = name_with_space, font = ("Montserrat", 12), foreground = white82, borderwidth = 0, background = black, activebackground  = black,
-                                activeforeground = white82, width = 15)
-            p_name.grid(row = 0, column = 0, sticky = "nsew", padx = (10, 30), pady = 5)
-            p_name.bind("<Button-1>", lambda event, a = project[1], b = project[0]: enterProject(a, b))
+                p_frame.grid(row = i, column = 0, sticky = "nsew")
 
-            #Status do projeto
-            p_status = tk.Label(p_frame, text = project[4], font = ("Montserrat", 12), foreground = white82, borderwidth = 0, background = black, activebackground  = black,
-                                activeforeground = white82, width = 12)
-            p_status.grid(row = 0, column = 1, sticky = "nsew", padx = 32, pady = 5)
-            p_status.bind("<Button-1>", lambda event, a = project[1], b = project[0]: enterProject(a, b))
+                #Nome do projeto
+                name_with_space = project[1].replace("_", " ")
+                p_name = tk.Label(p_frame, text = name_with_space, font = ("Montserrat", 12), foreground = white82, borderwidth = 0, background = black, activebackground  = black,
+                                    activeforeground = white82, width = 15, anchor = "w")
+                p_name.grid(row = 0, column = 0, sticky = "nsew", padx = (10, 30), pady = 5)
+                p_name.bind("<Button-1>", lambda event, a = project[1], b = project[0]: enterProject(a, b))
 
-            #Categoria do projeto
-            p_category = tk.Label(p_frame, text = project[3], font = ("Montserrat", 12), foreground = white82, borderwidth = 0, background = black, activebackground  = black,
-                                activeforeground = white82, width = 8)
-            p_category.grid(row = 0, column = 2, sticky = "nwse", padx = (32,30), pady = 5)
-            p_category.bind("<Button-1>", lambda event, a = project[1], b = project[0]: enterProject(a, b))
+                #Status do projeto
+                p_status = tk.Label(p_frame, text = project[4], font = ("Montserrat", 12), foreground = white82, borderwidth = 0, background = black, activebackground  = black,
+                                    activeforeground = white82, width = 12)
+                p_status.grid(row = 0, column = 1, sticky = "nsew", padx = 32, pady = 5)
+                p_status.bind("<Button-1>", lambda event, a = project[1], b = project[0]: enterProject(a, b))
 
-            #Data do projeto
-            p_date = tk.Label(p_frame, text = project[5], font = ("Montserrat", 12), foreground = white82, borderwidth = 0, background = black, activebackground  = black,
-                                activeforeground = white82, width = 10)
-            p_date.grid(row = 0, column = 3, sticky = "nsew", padx = (78,80), pady = 5)
-            p_date.bind("<Button-1>", lambda event, a = project[1], b = project[0]: enterProject(a, b))
+                #Categoria do projeto
+                p_category = tk.Label(p_frame, text = project[3], font = ("Montserrat", 12), foreground = white82, borderwidth = 0, background = black, activebackground  = black,
+                                    activeforeground = white82, width = 8, anchor = "w")
+                p_category.grid(row = 0, column = 2, sticky = "nwse", padx = (32,30), pady = 5)
+                p_category.bind("<Button-1>", lambda event, a = project[1], b = project[0]: enterProject(a, b))
 
-            cursorCheck = db.cursor(buffered=True)
-            cursorCheck.execute("SELECT entry_id FROM User_Projects WHERE user_id = %s AND project_id = %s", (user_id, project[0], ) )
-            checkP = cursorCheck.fetchone()
-            cursorCheck.close()
-            if not checkP:
-                jlPBTN = tk.Button(p_frame, image = self.joinpIMG, bd = 0, background = black, activebackground  = black)
-                jlPBTN.bind("<Button-1>", lambda event, a = user_id, b = jlPBTN, c = project[0]: join_project(a, b, c))
-                jlPBTN.grid(row = 0, column = 4, sticky = "nsew", padx = 20, pady = 5)
-            if checkP:
-                jlPBTN = tk.Button(p_frame, image = self.leavepIMG, bd = 0, background = black, activebackground  = black)
-                jlPBTN.bind("<Button-1>", lambda event, a = user_id, b = jlPBTN, c = project[0]: leave_project(a, b, c))
-                jlPBTN.grid(row = 0, column = 4, sticky = "nsew", padx = 20, pady = 5)
+                #Data do projeto
+                dt = datetime.datetime.strptime(str(project[5]), '%Y-%m-%d').strftime('%m/%d/%Y')
+                p_date = tk.Label(p_frame, text = dt, font = ("Montserrat", 12), foreground = white82, borderwidth = 0, background = black, activebackground  = black,
+                                    activeforeground = white82, width = 10)
+                p_date.grid(row = 0, column = 3, sticky = "nsew", padx = (72,80), pady = 5)
+                p_date.bind("<Button-1>", lambda event, a = project[1], b = project[0]: enterProject(a, b))
+
+                cursorCheck = db.cursor(buffered=True)
+                cursorCheck.execute("SELECT entry_id FROM User_Projects WHERE user_id = %s AND project_id = %s", (user_id, project[0], ) )
+                checkP = cursorCheck.fetchone()
+                cursorCheck.close()
+                if not checkP:
+                    jlPBTN = tk.Button(p_frame, image = self.joinpIMG, bd = 0, background = black, activebackground  = black)
+                    jlPBTN.bind("<Button-1>", lambda event, a = user_id, b = jlPBTN, c = project[0]: join_project(a, b, c))
+                    jlPBTN.grid(row = 0, column = 4, sticky = "nsew", padx = 20, pady = 5)
+                if checkP:
+                    jlPBTN = tk.Button(p_frame, image = self.leavepIMG, bd = 0, background = black, activebackground  = black)
+                    jlPBTN.bind("<Button-1>", lambda event, a = user_id, b = jlPBTN, c = project[0]: leave_project(a, b, c))
+                    jlPBTN.grid(row = 0, column = 4, sticky = "nsew", padx = 20, pady = 5)
+                
+                p_frame.bind("<Enter>",lambda event, a=p_name, b=p_status, c=p_category, d=p_date: 
+                                changeOnHover(a, b, c, d))
+                p_frame.bind("<Leave>",lambda event, a=p_name, b=p_status, c=p_category, d=p_date: 
+                                changeOnLeave(a, b, c, d))
+                p_frame.bind("<Button-1>", lambda event, a = project[1], b = project[0]: enterProject(a, b))
+                checkP = None
+                i += 1
             
-            p_frame.bind("<Enter>",lambda event, a=p_name, b=p_status, c=p_category, d=p_date: 
-                            changeOnHover(a, b, c, d))
-            p_frame.bind("<Leave>",lambda event, a=p_name, b=p_status, c=p_category, d=p_date: 
-                            changeOnLeave(a, b, c, d))
-            p_frame.bind("<Button-1>", lambda event, a = project[1], b = project[0]: enterProject(a, b))
-            checkP = None
-            i += 1
+        refreshP(myproblemsCF)
 
 #Muda a cor quando o cursor passa por cima de certo projeto
 def changeOnHover(a, b, c, d):

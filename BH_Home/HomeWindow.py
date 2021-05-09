@@ -3,6 +3,7 @@ try:
     import tkinter as tk
     from os.path import dirname, join
     import sys
+    import datetime
 
     from dotenv import load_dotenv
     from PIL import Image, ImageTk
@@ -72,9 +73,9 @@ class HomeWindow(tk.Frame):
             forget_MPF()
             return
 
-        def enterProblem(problem_id, proj_name):
+        def enterProblem(problem_id, proj_name, proj_id):
                 bH.frames["ProblemWindow"] = ProblemWindow(master = bH.container, controller = self.controller, bH = bH, user_id = user_id, last = "HomeWindow",
-                                                            prob_id = problem_id, proj_name = proj_name)
+                                                            prob_id = problem_id, proj_name = proj_name, proj_id = proj_id)
                 bH.frames["ProblemWindow"].grid(row = 0, column = 0, sticky = "nsew", pady = (53, 0))
                 controller.show_frame("ProblemWindow")    
 
@@ -102,7 +103,8 @@ class HomeWindow(tk.Frame):
                                 SELECT 
                                     po.name,
                                     po.date,
-                                    pj.name
+                                    pj.name,
+                                    pj.project_id
                                 FROM Problems po
                                 JOIN Projects pj
                                     ON pj.project_id = po.project_id
@@ -110,28 +112,30 @@ class HomeWindow(tk.Frame):
                 problem = cursorMP.fetchone()
                 cursorMP.close()
 
-                p_name = tk.Label(p_frame, text = problem[0], font = ("Montserrat SemiBold", 12), foreground = white82, borderwidth = 0, background = black,
+                name_with_space = problem[0].replace("_", " ")
+                p_name = tk.Label(p_frame, text = name_with_space, font = ("Montserrat SemiBold", 12), foreground = white82, borderwidth = 0, background = black,
                                     activeforeground = white82)
                 p_name.grid(row = 0, column = 0, sticky = "nw", padx = 18, pady = (8,0))
-                p_name.bind("<Button-1>", lambda event, a = pID[0], b = problem[2] : enterProblem(a, b))
+                p_name.bind("<Button-1>", lambda event, a = pID[0], b = problem[2], c = problem[3] : enterProblem(a, b, c))
 
-                p_date = tk.Label(p_frame, text = problem[1], font = ("Montserrat", 10), foreground = "#bfbfbf", borderwidth = 0, background = black,
+                dt = datetime.datetime.strptime(str(problem[1]), '%Y-%m-%d').strftime('%m/%d/%Y')
+                p_date = tk.Label(p_frame, text = dt, font = ("Montserrat", 10), foreground = "#bfbfbf", borderwidth = 0, background = black,
                                     activeforeground = white82)
                 p_date.grid(row = 0, column = 1, sticky = "ne", padx = 10, pady = 13)
-                p_date.bind("<Button-1>", lambda event, a = pID[0], b = problem[2] : enterProblem(a, b))
+                p_date.bind("<Button-1>", lambda event, a = pID[0], b = problem[2], c = problem[3] : enterProblem(a, b, c))
                 
 
-                p_projectName = tk.Label(p_frame, text = problem[2], font = ("Montserrat", 10), foreground = "#bfbfbf", borderwidth = 0, background = black,
+                pname_with_space = problem[2].replace("_", " ")
+                p_projectName = tk.Label(p_frame, text = pname_with_space, font = ("Montserrat", 10), foreground = "#bfbfbf", borderwidth = 0, background = black,
                                     activeforeground = white82)
                 p_projectName.grid(row = 1, column = 0, sticky = "nw", padx = 19, pady = 2)
-                p_projectName.bind("<Button-1>", lambda event, a = pID[0], b = problem[2] : enterProblem(a, b))
+                p_projectName.bind("<Button-1>", lambda event, a = pID[0], b = problem[2], c = problem[3] : enterProblem(a, b, c))
             
                 p_frame.bind("<Enter>",lambda event, a=p_name, b=p_date, c=p_projectName: 
                                 changeOnHover(a, b, c))
                 p_frame.bind("<Leave>",lambda event, a=p_name, b=p_date, c=p_projectName: 
                                 changeOnLeave(a, b, c))
-                p_frame.bind("<Button-1>", lambda event, a = pID[0], b = problem[2] :
-                                enterProblem(a, b))
+                p_frame.bind("<Button-1>", lambda event, a = pID[0], b = problem[2], c = problem[3] : enterProblem(a, b, c))
 
                 i += 1
             return
@@ -246,12 +250,6 @@ class HomeWindow(tk.Frame):
             forget_APF()
             return
 
-        def enterProblem(problem_id, proj_name):
-                bH.frames["ProblemWindow"] = ProblemWindow(master = bH.container, controller = self.controller, bH = bH, user_id = user_id, last = "HomeWindow",
-                                                            prob_id = problem_id, proj_name = proj_name)
-                bH.frames["ProblemWindow"].grid(row = 0, column = 0, sticky = "nsew", pady = (53, 0))
-                controller.show_frame("ProblemWindow")    
-
         def reloadAP(apCF):
             cursorAP = db.cursor()
             cursorAP.execute("""
@@ -259,7 +257,8 @@ class HomeWindow(tk.Frame):
                                         po.name,
                                         po.date,
                                         po.problem_id,
-                                        pj.name
+                                        pj.name,
+                                        pj.project_id
                                     FROM Problems as po
                                     JOIN Projects as pj
                                     ON po.project_id = pj.project_id
@@ -275,28 +274,29 @@ class HomeWindow(tk.Frame):
                 p_frame = tk.Frame(apCF, bg = black, height = 25, bd = 2)
                 p_frame.grid(row = i, column = 0, sticky = "nsew", pady = 5, padx = 27, columnspan = 4)
 
-                p_name = tk.Label(p_frame, text = problem[0], font = ("Montserrat SemiBold", 12), foreground = white82, borderwidth = 0, background = black,
+                name_with_space = problem[0].replace("_", " ")
+                p_name = tk.Label(p_frame, text = name_with_space, font = ("Montserrat SemiBold", 12), foreground = white82, borderwidth = 0, background = black,
                                     activeforeground = white82)
                 p_name.grid(row = 0, column = 0, sticky = "nw", padx = 18, pady = (8,0))
-                p_name.bind("<Button-1>", lambda event, a = problem[2], b = problem[3] : enterProblem(a, b))
+                p_name.bind("<Button-1>", lambda event, a = problem[2], b = problem[3], c = problem[4] : enterProblem(a, b, c))
 
-                p_date = tk.Label(p_frame, text = problem[1], font = ("Montserrat", 10), foreground = "#bfbfbf", borderwidth = 0, background = black,
+                dt = datetime.datetime.strptime(str(problem[1]), '%Y-%m-%d').strftime('%m/%d/%Y')
+                p_date = tk.Label(p_frame, text = dt, font = ("Montserrat", 10), foreground = "#bfbfbf", borderwidth = 0, background = black,
                                     activeforeground = white82)
                 p_date.grid(row = 0, column = 1, sticky = "ne", padx = 10, pady = 13)
-                p_date.bind("<Button-1>", lambda event, a = problem[2], b = problem[3] : enterProblem(a, b))
+                p_date.bind("<Button-1>", lambda event, a = problem[2], b = problem[3], c = problem[4] : enterProblem(a, b, c))
                 
-
-                p_projectName = tk.Label(p_frame, text = problem[3], font = ("Montserrat", 10), foreground = "#bfbfbf", borderwidth = 0, background = black,
+                pname_with_space = problem[3].replace("_", " ")
+                p_projectName = tk.Label(p_frame, text = pname_with_space, font = ("Montserrat", 10), foreground = "#bfbfbf", borderwidth = 0, background = black,
                                     activeforeground = white82)
                 p_projectName.grid(row = 1, column = 0, sticky = "nw", padx = 20, pady = 2)
-                p_projectName.bind("<Button-1>", lambda event, a = problem[2], b = problem[3] : enterProblem(a, b))
+                p_projectName.bind("<Button-1>", lambda event, a = problem[2], b = problem[3], c = problem[4] : enterProblem(a, b, c))
             
                 p_frame.bind("<Enter>",lambda event, a=p_name, b=p_date, c=p_projectName: 
                                 changeOnHover(a, b, c))
                 p_frame.bind("<Leave>",lambda event, a=p_name, b=p_date, c=p_projectName: 
                                 changeOnLeave(a, b, c))
-                p_frame.bind("<Button-1>", lambda event, a = problem[2], b = problem[3] :
-                                enterProblem(a, b))
+                p_frame.bind("<Button-1>", lambda event, a = problem[2], b = problem[3], c = problem[4] : enterProblem(a, b, c))
 
                 i += 1
             return

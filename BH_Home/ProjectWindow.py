@@ -6,6 +6,7 @@ try:
 
     from dotenv import load_dotenv
     from PIL import Image, ImageTk
+    import datetime
 
 except Exception as e:
     print("Algumas bibliotecas estão faltando: {}".format(e))
@@ -64,12 +65,12 @@ class ProjectWindow(tk.Frame):
         
 
         self.newP = tk.PhotoImage(file = "Assets/User_Interface/newproblemBtn.png")
-        addP_btn = tk.Button(self, image = self.newP, bd = 0, background = dark_grey, activebackground  = dark_grey, command = lambda: controller.show_frame("NewProjectWindow"))
+        addP_btn = tk.Button(self, image = self.newP, bd = 0, background = dark_grey, activebackground  = dark_grey, command = lambda: controller.show_frame("NewProblemWindow"))
         addP_btn.grid(row = 1, column = 1, padx = 40, pady = (10,5), sticky = "w")
 
         self.closeIMG = tk.PhotoImage(file = "Assets/User_Interface/close.png")
         closeX = tk.Button(self, image = self.closeIMG, bd = 0, background = dark_grey, activebackground  = dark_grey, command = lambda: controller.show_frame(last))
-        closeX.grid(row = 1, column = 2, sticky = "e", pady = (5,20), padx = 17)
+        closeX.grid(row = 1, column = 2, sticky = "nse", pady = (10,20), padx = (25,17))
 
         #Local que mostrara os projetos
         projectsF = tk.Frame(self, bg = black)
@@ -133,12 +134,12 @@ class ProjectWindow(tk.Frame):
             p_frame.grid(row = i, column = 0, sticky = "nsew")
             name_with_space = problem[1].replace("_", " ")
             p_name = tk.Label(p_frame, text = name_with_space, font = ("Montserrat", 12), foreground = white82, borderwidth = 0, background = black, activebackground  = black,
-                                activeforeground = white82, width = 15)
+                                activeforeground = white82, width = 15, anchor = "w")
             p_name.grid(row = 0, column = 0, sticky = "nsew", padx = (22, 25), pady = 5)
             p_name.bind("<Button-1>", lambda event, a = problem[0]: enterProblem(a))
 
             p_reporter = tk.Label(p_frame, text = problem[2], font = ("Montserrat", 12), foreground = white82, borderwidth = 0, background = black, activebackground  = black,
-                                activeforeground = white82, width = 8)
+                                activeforeground = white82, width = 8, anchor = "w")
             p_reporter.grid(row = 0, column = 1, sticky = "nsew", padx = (47,20), pady = 5)
             p_reporter.bind("<Button-1>", lambda event, a = problem[0]: enterProblem(a))
 
@@ -152,7 +153,8 @@ class ProjectWindow(tk.Frame):
             p_priority.grid(row = 0, column = 3, sticky = "nwse", padx = (28, 40), pady = 5)
             p_priority.bind("<Button-1>", lambda event, a = problem[0]: enterProblem(a))
 
-            p_date = tk.Label(p_frame, text = problem[5], font = ("Montserrat", 12), foreground = white82, borderwidth = 0, background = black, activebackground  = black,
+            dt = datetime.datetime.strptime(str(problem[5]), '%Y-%m-%d').strftime('%m/%d/%Y')
+            p_date = tk.Label(p_frame, text = dt, font = ("Montserrat", 12), foreground = white82, borderwidth = 0, background = black, activebackground  = black,
                                 activeforeground = white82, width = 10)
             p_date.grid(row = 0, column = 4, sticky = "nsew", padx = 52, pady = 5)
             p_date.bind("<Button-1>", lambda event, a = problem[0]: enterProblem(a))
