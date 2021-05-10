@@ -21,7 +21,9 @@
 ![Bug Hunter Screen Shot][BH-screenshot]
 
 O Bug Hunter é um projeto de estudo para me aprimorar em Python e MYSQL. O seu propósito é ser um sistema de Bug Tracking que pode ser modificado e especializado para as necessidades de qualquer empresa.
+<br />
 Agradecimentos ao Raul Melo pelo suporte!
+<br />
 
 ### Feito Com
 * [Tkinter](https://www.devmedia.com.br/tkinter-interfaces-graficas-em-python/33956)
