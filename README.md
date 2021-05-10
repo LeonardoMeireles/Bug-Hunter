@@ -27,7 +27,7 @@ O Bug Hunter é um projeto de estudo para me aprimorar em Python e MYSQL. O seu 
 * [MYSQL](https://www.mysql.com/)
 
 <!-- CONTACT -->
-## Contact
+## Contatos
 
 Leonardo Meireles da Silva - [Linkedin](www.linkedin.com/in/leonardo-meireles-da-silva) - leo.meireles01@gmail.com
 
