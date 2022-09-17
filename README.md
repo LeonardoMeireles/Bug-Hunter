@@ -8,31 +8,31 @@
   <h3 align="center">Bug Hunter</h3>
 
   <p align="center">
-    Um aplicativo de bug tracking para comandar e organizar os seus projetos!
+    A bug tracking app for you to lead and organize your projects!
     <br />
     <a href="https://github.com/LeonardoMeireles/Bug-Hunter"><strong>Explore os docs »</strong></a>
     <br />
   </p>
 </p>
 
-<!-- Informações do projeto -->
-## Informações Do Projeto
+<!-- Project information -->
+## Project Information
 
 ![Bug Hunter Screen Shot][BH-screenshot]
 
-O Bug Hunter é um projeto de estudo para me aprimorar em Python e MYSQL. O seu propósito é ser um sistema de Bug Tracking que pode ser modificado e especializado para as necessidades de qualquer empresa.
+Bug Hunter is a study project to improve my Python and MYSQL skills. It's main pourpese is to be a bug tracking system capable of being modified and specialized on the needs of any company.
   <br />
-  Video demonstrando a funcionalidade do programa -> [Bug Hunter Video](https://www.linkedin.com/feed/update/urn:li:activity:6797624736768675840/)
+  Video demonstrating an MVP of Bug Hunter -> [Bug Hunter Video](https://www.linkedin.com/feed/update/urn:li:activity:6797624736768675840/)
   <br />
-  Agradecimentos ao [Raul Mello](https://github.com/raulmel1o) pelo suporte!
+  Thanks to [Raul Mello](https://github.com/raulmel1o) for the support!
   <br />
 
-### Feito Com
+### Made with
 * [Tkinter](https://www.devmedia.com.br/tkinter-interfaces-graficas-em-python/33956)
 * [MYSQL](https://www.mysql.com/)
 
 <!-- CONTACT -->
-## Contatos
+## Contact
 
 Leonardo Meireles da Silva - [Linkedin](www.linkedin.com/in/leonardo-meireles-da-silva) - leo.meireles01@gmail.com
 
