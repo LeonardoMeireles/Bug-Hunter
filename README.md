@@ -26,7 +26,7 @@ Bug Hunter is a study project to improve my Python and MYSQL skills. It's main p
   <br />
 
 ### Made with
-* [Python](https://www.python.org/))
+* [Python](https://www.python.org/)
 * [Tkinter](https://www.devmedia.com.br/tkinter-interfaces-graficas-em-python/33956)
 * [MYSQL](https://www.mysql.com/)
 
